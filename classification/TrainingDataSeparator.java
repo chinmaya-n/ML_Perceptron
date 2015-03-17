@@ -8,6 +8,11 @@ import java.io.FileWriter;
 import java.io.File;
 import java.util.*;
 
+/**
+ * 
+ * @author cn262114
+ *
+ */
 public class TrainingDataSeparator {
 	
 	/**
@@ -47,43 +52,12 @@ public class TrainingDataSeparator {
 			// Get the class of the point
 			int sysClass = Integer.parseInt(Character.toString(line.charAt(lineLength-1)));
 			
-			if(lineCount%500==0) {
-				
-			}
 			// Append the line to appropriate file
-			switch(sysClass) {
-			case 0: 
-				appendToFile(bwList, line, 0);
-				break;
-			case 1: 
-				appendToFile(bwList, line, 1);
-				break;
-			case 2: 
-				appendToFile(bwList, line, 2);
-				break;
-			case 3: 
-				appendToFile(bwList, line, 3);
-				break;
-			case 4: 
-				appendToFile(bwList, line, 4);
-				break;
-			case 5: 
-				appendToFile(bwList, line, 5);
-				break;
-			case 6: 
-				appendToFile(bwList, line, 6);
-				break;
-			case 7: 
-				appendToFile(bwList, line, 7);
-				break;
-			case 8: 
-				appendToFile(bwList, line, 8);
-				break;
-			case 9: 
-				appendToFile(bwList, line, 9);
-				break;
-			default:
-				System.out.println("File Class not in range of 0 to 9. Aborting!");
+			if(sysClass<=9 && sysClass>=0) {
+				appendToFile(bwList, line, sysClass);
+			}
+			else {
+				System.out.println("Class range should be from 0 to 9. Check at line: " + lineCount);
 				System.exit(-1);
 			}
 			

@@ -1,5 +1,3 @@
-package classification;
-
 import weka.core.matrix.Matrix;
 import java.io.BufferedReader;
 import java.io.FileReader;

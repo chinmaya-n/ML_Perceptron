@@ -25,7 +25,8 @@ public class Perceptron {
 		boolean converged = false;
 
 		// Run for given Max no. of Epochs or until converged
-		for(int e=1; e<=maxEpochs && !converged; e++) {
+		int e;
+		for(e=1; e<=maxEpochs && !converged; e++) {
 			converged = true;
 
 			// Run for each element in the data-set
@@ -56,8 +57,9 @@ public class Perceptron {
 		
 		// Check if Converged!
 		if(converged) {
-			System.out.println("Converged. ~ in Simple Perceptron for W:");
-			vW.print(2, 1);
+			System.out.println("Converged. ~ in Simple Perceptron");
+			System.out.println("@epoch: "+(e-1)+" for W:");
+			vW.print(5, 1);
 			
 			// Return the W vector calculated for prediction
 			return vW;
@@ -97,7 +99,8 @@ public class Perceptron {
 		boolean converged = false;
 
 		// Run for given Max no. of Epochs or until converged
-		for(int e=1; e<=maxEpochs && !converged; e++) {
+		int e;
+		for(e=1; e<=maxEpochs && !converged; e++) {
 			converged = true;
 
 			// Run for each element in the data-set
@@ -122,15 +125,16 @@ public class Perceptron {
 				iterCount++;
 				
 				// Debug prints
-//				System.out.println("Iteration: " +e+ "-" +i);
-//				System.out.println("phiXi:");
-//				phiXi.print(2, 1);
-//				System.out.println("yi: " + yi + " ti: " + labelsVector.get(0, i-1));
-//				System.out.println("new W:");
-//				vW.print(2, 1);
-//				System.out.println("new avg W:");
-//				vAvgW.print(2, 1);
-//				System.out.println("iteration Count: "+iterCount);
+				System.out.println("Iteration: " +e+ "-" +i);
+				System.out.println("phiXi:");
+				phiXi.print(2, 1);
+				System.out.println("yi: " + yi + " ti: " + labelsVector.get(0, i-1));
+				System.out.println("new W:");
+				vW.print(2, 1);
+				System.out.println("new avg W:");
+				vAvgW.print(2, 1);
+				System.out.println("iteration Count: "+iterCount);
+				System.out.println("--------------");
 			}
 		}
 
@@ -139,8 +143,9 @@ public class Perceptron {
 		
 		// Check if Converged!
 		if(converged) {
-			System.out.println("Converged. ~ in averaged perceptron. @ average vector W:");
-			vAvgW.print(2, 1);
+			System.out.println("Converged. ~ in averaged perceptron. (Converged for w not for avgW)");
+			System.out.println("@epoch: "+(e-1)+" for average vector W:");
+			vAvgW.print(5, 5);
 			
 			// Return the average weight Vector
 			return vAvgW;
@@ -171,7 +176,7 @@ public class Perceptron {
 		// Predict the class for each test point
 		for(int i=0; i<noOfTestPoints; i++) {
 			vLabels.set(0, i, sign(discriminantFunction(w, 
-					testPHI.getMatrix(0, testPHI.getRowDimension(), i, i))));
+					testPHI.getMatrix(0, testPHI.getRowDimension()-1, i, i))));
 		}
 		
 		// return labels

@@ -178,7 +178,7 @@ public class KernelPerceptron {
 		// Predict the sign for each test point
 		for(int i=0; i<noOfTestPoints; i++) {
 			machineLabels.set(0, i, sign(discriminantFunction(mAlpha, trainingLabels, trainingPHI,
-					testPHI.getMatrix(0, testPHI.getRowDimension(), i, i), kType)));
+					testPHI.getMatrix(0, testPHI.getRowDimension()-1, i, i), kType)));
 		}
 
 		// return the machine Labels

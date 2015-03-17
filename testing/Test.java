@@ -1,3 +1,5 @@
+package testing;
+
 import classification.*;
 import java.io.IOException;
 import weka.core.matrix.Matrix;
@@ -16,9 +18,14 @@ public class Test {
 		int maxEpochs = Integer.parseInt(argv[3]);
 
 		// Get the matrices from the given training file
-		GenerateMatrices gm = new GenerateMatrices(trainingDataFile);
-		Matrix mPHI = gm.getPHI();
-		Matrix mLabels = gm.getLabelsVector();
+		GenerateMatrices gmTraining = new GenerateMatrices(trainingDataFile);
+		Matrix mPHI = gmTraining.getPHI();
+		Matrix mLabels = gmTraining.getLabelsVector();
+		
+		// Get the matrices from the given testing file
+		GenerateMatrices gmTesting = new GenerateMatrices(testDataFile);
+		Matrix testPHI = gmTesting.getPHI();
+		Matrix trueTestLabels = gmTesting.getLabelsVector();
 
 		// Get to the appropriate perceptron
 		switch(pType) {
@@ -39,7 +46,7 @@ public class Test {
 			// If the data is not converged mW will be a single element matrix. Test it
 			if(mW.getRowDimension()+mW.getColumnDimension() != 2) {
 				// Send data for testing now!
-
+				Perceptron.classify(mW, testPHI).print(1, 1);
 			}
 			// break
 			break;
@@ -133,7 +140,6 @@ public class Test {
 		default:
 			System.out.println("Select from the 4 types of perceptrons. \n 1. Simple Perceptron\n " +
 					"2. Averaged Perceptron\n 3. Kernel Perceptron\n 4. Averaged Kernel Perceptron");
-		
 		}
 	}
 }
