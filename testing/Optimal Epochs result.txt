@@ -1,0 +1,11 @@
+Successful Predictions: 873.0 Total Count: 1000.0
+Accuracy for epoch value: 1 is : 87.3
+
+Successful Predictions: 907.0 Total Count: 1000.0
+Accuracy for epoch value: 5 is : 90.7
+
+Successful Predictions: 851.0 Total Count: 1000.0
+Accuracy for epoch value: 10 is : 85.1
+
+Successful Predictions: 889.0 Total Count: 1000.0
+Accuracy for epoch value: 20 is : 88.9

@@ -1,5 +1,13 @@
 package classification;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.StringTokenizer;
+
 import weka.core.matrix.Matrix;
 
 public class KernelPerceptron {
@@ -9,12 +17,16 @@ public class KernelPerceptron {
 	public Matrix featureVectors;
 	// matrix of labels for each input data
 	public Matrix mLabels;
+
 	// sigma value for the gaussian kernel
 	private double sigmaForGaussian=0;
 	// Order of polynomial
 	private int orderOfPolynomial=0;
 	// if converged or not
 	private boolean converged = false;
+
+	// write learned info to file
+	public String writeLearnedInfoToFile = "";
 
 	/**
 	 * Simple Two class Kernel perceptron training.
@@ -23,8 +35,9 @@ public class KernelPerceptron {
 	 * @param kType - kernel type as in Kernels.java enum
 	 * @param kernelParam - sigma value / order of polynomial based on type of kernel
 	 * @return Alpha matrix 
+	 * @throws IOException 
 	 */
-	public Matrix trainKernelPerceptron(int maxEpochs, Kernels kType, double kernelParam) {
+	public Matrix trainKernelPerceptron(int maxEpochs, Kernels kType, double kernelParam) throws IOException {
 
 		// Get the no of Examples from the data set
 		int noOfExamples = featureVectors.getColumnDimension();
@@ -32,7 +45,7 @@ public class KernelPerceptron {
 		Matrix mAlpha = new Matrix(noOfExamples, 1, 0);
 		// set converged variable to false - just for beginning the loop
 		boolean converged = false;
-		
+
 		// based on kType fill sigmaForGaussian / orderOfPolynomial
 		if(kType == Kernels.POLYNOMIAL)
 			orderOfPolynomial = (int) kernelParam;
@@ -77,7 +90,12 @@ public class KernelPerceptron {
 		else { 
 			System.out.println("Not Converged! ~ in Kernel Perceptron (" + kType.toString() + ")");
 		}
-		
+
+		// Check if learning write to file is enabled
+		if(writeLearnedInfoToFile != "") {
+			writeToFile(mAlpha, mLabels, featureVectors, writeLearnedInfoToFile);
+		}
+
 		// Return the trained alpha matrix
 		return mAlpha;
 	}
@@ -89,8 +107,9 @@ public class KernelPerceptron {
 	 * @param kType - kernel type as in Kernels.java enum
 	 * @param kernelParam - sigma value / order of polynomial based on type of kernel
 	 * @return avg Alpha matrix 
+	 * @throws IOException 
 	 */
-	public Matrix trainAveragedKernelPerceptron(int maxEpochs, Kernels kType, double kernelParam) {
+	public Matrix trainAveragedKernelPerceptron(int maxEpochs, Kernels kType, double kernelParam) throws IOException {
 
 		// Get the no of Examples from the data set
 		int noOfExamples = featureVectors.getColumnDimension();
@@ -98,12 +117,12 @@ public class KernelPerceptron {
 		Matrix mAlpha = new Matrix(noOfExamples, 1, 0);
 		// set converged variable to false - just for beginning the loop
 		boolean converged = false;
-		
+
 		// Average Alpha initialization
 		Matrix mAvgAlpha = new Matrix(noOfExamples, 1, 0);
 		// Total iteration count
 		double iterCount=1;
-		
+
 		// based on kType fill sigmaForGaussian / orderOfPolynomial
 		if(kType == Kernels.POLYNOMIAL)
 			orderOfPolynomial = (int) kernelParam;
@@ -134,18 +153,18 @@ public class KernelPerceptron {
 				// total sum of alpha
 				mAvgAlpha = mAvgAlpha.plus(mAlpha);
 				iterCount++;
-				
+
 				// Debug prints
-//				System.out.println("Iteration: " +e+ "-" +i);
-//				System.out.println("Iteration total count: "+iterCount);
-//				System.out.println("function value: " + functionValue + " ti: " + labelVector.get(0, i));
-//				System.out.println("new mAlpha:");
-//				mAlpha.print(2, 1);
-//				System.out.println("New Avg of Alphas:");
-//				mAvgAlpha.print(2, 1);
+				//				System.out.println("Iteration: " +e+ "-" +i);
+				//				System.out.println("Iteration total count: "+iterCount);
+				//				System.out.println("function value: " + functionValue + " ti: " + labelVector.get(0, i));
+				//				System.out.println("new mAlpha:");
+				//				mAlpha.print(2, 1);
+				//				System.out.println("New Avg of Alphas:");
+				//				mAvgAlpha.print(2, 1);
 			}
 		}
-		
+
 		// Average the total sum of Alpha
 		mAvgAlpha = mAvgAlpha.times(1/iterCount);
 
@@ -158,7 +177,12 @@ public class KernelPerceptron {
 		else { 
 			System.out.println("Not Converged! ~ in Kernel Perceptron (" + kType.toString() + ")");
 		}
-		
+
+		// Check if learning write to file is enabled
+		if(writeLearnedInfoToFile != "") {
+			writeToFile(mAvgAlpha, mLabels, featureVectors, writeLearnedInfoToFile);
+		}
+
 		// Return the trained alpha matrix
 		return mAvgAlpha;
 	}
@@ -170,10 +194,11 @@ public class KernelPerceptron {
 	 * @param trainingPHI - training data feature vectors matrix of all data
 	 * @param testPHI - test data feature vectors matrix of all data
 	 * @param kType - kernel type to be used. Should be used same in training & testing
-	 * @return
+	 * @param kVariable - kernel variable i.e. sigma value / order of polynomial based on type of kernel
+	 * @return machine labels matrix. Dim: 1 x noOfTestExamples
 	 */
-	public Matrix classify(Matrix mAlpha, Matrix trainingLabels, Matrix trainingPHI, Matrix testPHI, Kernels kType) {
-
+	public Matrix classify(Matrix mAlpha, Matrix trainingLabels, Matrix trainingPHI, Matrix testPHI, Kernels kType, double kVariable) {
+		
 		// Check if the sent data is related or not
 		if(mAlpha.getColumnDimension() != trainingLabels.getRowDimension() || 
 				testPHI.getRowDimension() != trainingPHI.getRowDimension()) {
@@ -182,6 +207,12 @@ public class KernelPerceptron {
 			System.out.println("No of features for training data may not be equal to testing data features!");
 			System.exit(-1);
 		}
+		
+		// based on kType fill sigmaForGaussian / orderOfPolynomial
+		if(kType == Kernels.POLYNOMIAL)
+			orderOfPolynomial = (int) kVariable;
+		else if(kType == Kernels.GAUSSIAN)
+			sigmaForGaussian = kVariable;
 
 		// No of Test Points
 		int noOfTestPoints = testPHI.getColumnDimension();
@@ -197,6 +228,62 @@ public class KernelPerceptron {
 
 		// return the machine Labels
 		return machineLabels;
+	}
+
+	/**
+	 * Classifies the given test data from the learned data file
+	 * @param fileName - Learned data file (from the trainKernelPerceptron / trainKernelAveragedPerceptron)
+	 * @param testPHI - test data feature vectors matrix of all data
+	 * @param kType - kernel type to be used. Should be used same in training & testing
+	 * @param kVariable - kernel variable i.e. sigma value / order of polynomial based on type of kernel
+	 * @return machine labels matrix. Dim: 1 x noOfTestExamples
+	 * @throws IOException
+	 */
+	public Matrix classify(String fileName, Matrix testPHI, Kernels kType, double kVariable) throws IOException {
+
+		// Open the file to get the contents
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		
+		// Get the size of the features for an example
+		String line = br.readLine();
+		StringTokenizer st = new StringTokenizer(line, " ");
+		int noOfFeatures = st.countTokens()-1;	// Not counting Alpha*T (the first column)
+		
+		// Get the number of examples = no of lines in the given file
+		int noOfExamples = 0;
+		LineNumberReader lnr = new LineNumberReader(new FileReader(fileName));
+		while(lnr.readLine() !=null) {
+			noOfExamples++;
+		}
+		lnr.close();
+		
+		// Create matrices to store the contents from the file
+		Matrix mAlphaT = new Matrix(noOfExamples, 1);
+		Matrix mPHI = new Matrix(noOfFeatures, noOfExamples);
+		Matrix mLabels = new Matrix(1, noOfExamples, 1);	// Dummy labels as the labels are already carried by mAlphaT
+		
+		// Read each line and populate the data
+		int lineNumber = 0;
+		do {
+			// Tokenize the string
+			StringTokenizer stLine = new StringTokenizer(line, " ");
+			// Fill the Alpha*T value in mAlphaT matrix
+			mAlphaT.set(lineNumber, 0, Double.parseDouble(stLine.nextToken()));
+			// Fill the feature vectors in mPHI matrix
+			for(int i=0; i<noOfFeatures; i++) {
+				mPHI.set(i, lineNumber, Double.parseDouble(stLine.nextToken()));
+			}
+			
+			// Read next line
+			line = br.readLine();
+			lineNumber++;
+		}while(lineNumber < noOfExamples && line != null);
+		
+		// close buffer
+		br.close();
+		
+		// Send the data to classify
+		return classify(mAlphaT, mLabels, mPHI, testPHI, kType, kVariable);
 	}
 
 	/**
@@ -286,6 +373,39 @@ public class KernelPerceptron {
 	}
 
 	/**
+	 * 
+	 * @param mAlpha
+	 * @param mLabels
+	 * @param mPHI
+	 * @param fileName
+	 * @throws IOException
+	 */
+	private void writeToFile(Matrix mAlpha, Matrix mLabels, Matrix mPHI, String fileName) throws IOException {
+		// Open the file to write
+		BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+
+		// File format: 
+		// For each example: product of alpha & t followed by feature vectors 
+		// alpha*T phi(x0) phi(x1) phi(x2) .....
+		// Select Each example
+		for(int i=0; i<mPHI.getColumnDimension(); i++) {
+			bw.write(Integer.toString((int) (mAlpha.get(i, 0)*mLabels.get(0, i))));
+			bw.write(" ");
+			// Concatenate all the feature vectors for an example
+			for(int j=0; j<mPHI.getRowDimension(); j++) {
+				bw.write(Double.toString(mPHI.get(j ,i)));
+				bw.write(" ");
+			}
+
+			// write line to file
+			bw.write("\n");
+		}
+
+		// Close buffer writer
+		bw.close();
+	}
+
+	/**
 	 * Find the sign of the value. i.e either +ve or -ve
 	 * @param value
 	 * @return 1 - if 0 or +ve / -1 if -ve
@@ -296,7 +416,7 @@ public class KernelPerceptron {
 		else
 			return -1;
 	}
-	
+
 	/**
 	 * Set the converged variable to true or false
 	 * @param flag
@@ -304,7 +424,7 @@ public class KernelPerceptron {
 	private void setConverged(boolean flag) {
 		converged = flag;
 	}
-	
+
 	/**
 	 * Get if the model converged or not on given data
 	 * @return true if converged else false

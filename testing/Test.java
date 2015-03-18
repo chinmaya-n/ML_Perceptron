@@ -88,10 +88,13 @@ public class Test {
 				System.exit(-1);
 			}
 			
+			// Write to file
+			kernelPerceptron.writeLearnedInfoToFile = "./LearnedInfo/Kernel_" + kEnumType.toString() + "_" + argv[5] + ".learned";
+			
 			// Send the data for training & get alpha
 			Matrix mAlpha = kernelPerceptron.trainKernelPerceptron(maxEpochs, kEnumType, Double.parseDouble(argv[5]));
 			// Send for testing using the mAlpha
-//			kernelPerceptron.classify(mAlpha, mLabels, mPHI, testPHI, kEnumType).print(1, 1);
+//			kernelPerceptron.classify(mAlpha, mLabels, mPHI, testPHI, kEnumType, Double.parseDouble(argv[5])).print(1, 1);
 			
 			// break
 			break;
