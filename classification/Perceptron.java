@@ -4,15 +4,20 @@ import weka.core.matrix.Matrix;
 
 public class Perceptron {
 
+	// Member Variables
+	// PHI (vector of feature vectors for each input element in data-set)
+	public Matrix featureVectors;
+	// vector of labels for each input data
+	public Matrix labelsVector;
+	// is converged or not
+	private boolean converged = false;
+	
 	/**
 	 * Simple Two class perceptron training. 
-	 * Returns Weights vector if converged else return single element matrix with -1
-	 * @param featureVectors - PHI (vector of feature vectors for each input element in data-set)
-	 * @param labelsVector - vector of labels for each input data
 	 * @param maxEpochs - maximum number of epochs to perform if not converged 
 	 * @return W matrix 
 	 */
-	public static Matrix trainPerceptron(Matrix featureVectors, Matrix labelsVector, int maxEpochs) {
+	public Matrix trainPerceptron(int maxEpochs) {
 
 		// Create a weight vector matrix, W - Dim: rows in (featureVectors) X 1
 		// i.e no. of features in each element X 1 & Initialize it to zero
@@ -57,30 +62,25 @@ public class Perceptron {
 		
 		// Check if Converged!
 		if(converged) {
+			setConverged(true);
 			System.out.println("Converged. ~ in Simple Perceptron");
 			System.out.println("@epoch: "+(e-1)+" for W:");
 			vW.print(5, 1);
-			
-			// Return the W vector calculated for prediction
-			return vW;
 		}
 		else {
 			System.out.println("Not Converged! ~ in Simple Perceptron");
-			
-			// As the data did not converge, return single element matrix with -1
-			return new Matrix(1,1,-1);
 		}
+		
+		// Return the W vector calculated for prediction
+		return vW;
 	}
 	
 	/**
 	 * Simple Two class average perceptron training. 
-	 * Returns average Weights vector if converged else return single element matrix with -1
-	 * @param featureVectors - PHI (vector of feature vectors for each input element in data-set)
-	 * @param labelsVector - vector of labels for each input data
 	 * @param maxEpochs - maximum number of epochs to perform if not converged 
 	 * @return avg W matrix 
 	 */
-	public static Matrix trainAveragedPerceptron(Matrix featureVectors, Matrix labelsVector, int maxEpochs) {
+	public Matrix trainAveragedPerceptron(int maxEpochs) {
 
 		// Create a weight vector matrix, W - Dim: rows in (featureVectors) X 1
 		// i.e no. of features in each element X 1 & Initialize it to zero
@@ -125,16 +125,16 @@ public class Perceptron {
 				iterCount++;
 				
 				// Debug prints
-				System.out.println("Iteration: " +e+ "-" +i);
-				System.out.println("phiXi:");
-				phiXi.print(2, 1);
-				System.out.println("yi: " + yi + " ti: " + labelsVector.get(0, i-1));
-				System.out.println("new W:");
-				vW.print(2, 1);
-				System.out.println("new avg W:");
-				vAvgW.print(2, 1);
-				System.out.println("iteration Count: "+iterCount);
-				System.out.println("--------------");
+//				System.out.println("Iteration: " +e+ "-" +i);
+//				System.out.println("phiXi:");
+//				phiXi.print(2, 1);
+//				System.out.println("yi: " + yi + " ti: " + labelsVector.get(0, i-1));
+//				System.out.println("new W:");
+//				vW.print(2, 1);
+//				System.out.println("new avg W:");
+//				vAvgW.print(2, 1);
+//				System.out.println("iteration Count: "+iterCount);
+//				System.out.println("--------------");
 			}
 		}
 
@@ -143,22 +143,26 @@ public class Perceptron {
 		
 		// Check if Converged!
 		if(converged) {
+			setConverged(true);
 			System.out.println("Converged. ~ in averaged perceptron. (Converged for w not for avgW)");
 			System.out.println("@epoch: "+(e-1)+" for average vector W:");
 			vAvgW.print(5, 5);
-			
-			// Return the average weight Vector
-			return vAvgW;
 		}
 		else {
 			System.out.println("Not Converged! ~ in Averaged Perceptron");
-			
-			// As the data did not converge, return single element matrix with -1
-			return new Matrix(1,1,-1);
 		}
+		
+		// Return the average weight Vector
+		return vAvgW;
 	}
 	
-	public static Matrix classify(Matrix w, Matrix testPHI) {
+	/**
+	 * Classifies the given test data into different classes either +1 or -1
+	 * @param w	- learned weight vector from training data
+	 * @param testPHI - matrix of all feature vectors from the test data set
+	 * @return labels matrix i.e matrix with label for each test example in each column. Dim: 1 x noOfTestExamples 
+	 */
+	public Matrix classify(Matrix w, Matrix testPHI) {
 		
 		// Test if the given matrices are compatible or not
 		if(w.getRowDimension() != testPHI.getRowDimension()) {
@@ -185,11 +189,11 @@ public class Perceptron {
 	
 	/**
 	 * Discriminant function value when using simple Perceptron
-	 * @param vW - W matrix
+	 * @param vW - W matrix (learned weight vector)
 	 * @param phiXi - Feature vector of example i
 	 * @return vW transpose * phiXi value
 	 */
-	public static double discriminantFunction(Matrix vW, Matrix phiXi) {
+	public double discriminantFunction(Matrix vW, Matrix phiXi) {
 		// return f(x) = wT * phi(Xi)
 		return vW.transpose().times(phiXi).get(0, 0);
 	}
@@ -199,10 +203,26 @@ public class Perceptron {
 	 * @param value
 	 * @return 1 - if 0 or +ve / -1 if -ve
 	 */
-	private static int sign(double value) {
+	private int sign(double value) {
 		if(value >= 0)
 			return 1;
 		else
 			return -1;
+	}
+	
+	/**
+	 * Set the converged variable to true or false
+	 * @param flag
+	 */
+	private void setConverged(boolean flag) {
+		converged = flag;
+	}
+	
+	/**
+	 * Get if the model converged or not on given data
+	 * @return true if converged else false
+	 */
+	public boolean isConverged() {
+		return converged;
 	}
 }

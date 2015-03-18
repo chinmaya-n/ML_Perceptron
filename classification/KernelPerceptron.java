@@ -4,21 +4,27 @@ import weka.core.matrix.Matrix;
 
 public class KernelPerceptron {
 
+	// Member variables
+	// PHI (vector of feature vectors for each input element in data-set)
+	public Matrix featureVectors;
+	// matrix of labels for each input data
+	public Matrix mLabels;
 	// sigma value for the gaussian kernel
-	public static double sigmaForGaussian=0;
+	private double sigmaForGaussian=0;
 	// Order of polynomial
-	public static int orderOfPolynomial=0;
+	private int orderOfPolynomial=0;
+	// if converged or not
+	private boolean converged = false;
 
 	/**
 	 * Simple Two class Kernel perceptron training.
-	 * Returns Alpha matrix if converged else returns single cell matrix with value -1
-	 * @param featureVectors - PHI (vector of feature vectors for each input element in data-set)
-	 * @param vlabels - vector of labels for each input data
+	 * If using linear/quadratic kernels - send some dummy value for "kernelParam" parameter
 	 * @param maxEpochs - maximum number of epochs to perform if not converged 
 	 * @param kType - kernel type as in Kernels.java enum
+	 * @param kernelParam - sigma value / order of polynomial based on type of kernel
 	 * @return Alpha matrix 
 	 */
-	public static Matrix trainKernelPerceptron(Matrix featureVectors, Matrix vlabels, int maxEpochs, Kernels kType) {
+	public Matrix trainKernelPerceptron(int maxEpochs, Kernels kType, double kernelParam) {
 
 		// Get the no of Examples from the data set
 		int noOfExamples = featureVectors.getColumnDimension();
@@ -26,6 +32,12 @@ public class KernelPerceptron {
 		Matrix mAlpha = new Matrix(noOfExamples, 1, 0);
 		// set converged variable to false - just for beginning the loop
 		boolean converged = false;
+		
+		// based on kType fill sigmaForGaussian / orderOfPolynomial
+		if(kType == Kernels.POLYNOMIAL)
+			orderOfPolynomial = (int) kernelParam;
+		else if(kType == Kernels.GAUSSIAN)
+			sigmaForGaussian = kernelParam;
 
 		// Run for given Max no. of Epochs or until converged
 		int e;
@@ -35,13 +47,13 @@ public class KernelPerceptron {
 			// Run for each element in the data-set
 			for(int i=0; i<noOfExamples; i++) {
 				// discriminant function value
-				double functionValue = discriminantFunction(mAlpha, vlabels, featureVectors, 
+				double functionValue = discriminantFunction(mAlpha, mLabels, featureVectors, 
 						featureVectors.getMatrix(0, featureVectors.getRowDimension()-1, i, i), kType);
 				// Sign of the function value
 				int yi = sign(functionValue);
 
 				// Check if predicted label is same as true label
-				if(yi != vlabels.get(0, i)) {
+				if(yi != mLabels.get(0, i)) {
 					// labels are different. So, improve mAlpha
 					mAlpha.set(i, 0, mAlpha.get(i, 0)+1);
 					// mark converged as false
@@ -58,30 +70,27 @@ public class KernelPerceptron {
 
 		// Check if Converged!
 		if(converged) {
+			setConverged(true);
 			System.out.println("Converged ~ in Kernel Perceptron (" + kType.toString() + ") @epoch: "+ (e-1) + " With Alpha:");
 			mAlpha.print(2, 1);
-
-			// Return the trained alpha matrix
-			return mAlpha;
 		}
 		else { 
 			System.out.println("Not Converged! ~ in Kernel Perceptron (" + kType.toString() + ")");
-
-			// returns single cell matrix with value -1 as it is not converged
-			return new Matrix(1,1,-1);
 		}
+		
+		// Return the trained alpha matrix
+		return mAlpha;
 	}
 
 	/**
 	 * Simple Two class Averaged Kernel perceptron training.
-	 * Returns Alpha matrix if converged else returns single cell matrix with value -1
-	 * @param featureVectors - PHI (vector of feature vectors for each input element in data-set)
-	 * @param vlabels - vector of labels for each input data
+	 * If using linear/quadratic kernels - send some dummy value for "kernelParam" parameter
 	 * @param maxEpochs - maximum number of epochs to perform if not converged 
 	 * @param kType - kernel type as in Kernels.java enum
+	 * @param kernelParam - sigma value / order of polynomial based on type of kernel
 	 * @return avg Alpha matrix 
 	 */
-	public static Matrix trainAveragedKernelPerceptron(Matrix featureVectors, Matrix vlabels, int maxEpochs, Kernels kType) {
+	public Matrix trainAveragedKernelPerceptron(int maxEpochs, Kernels kType, double kernelParam) {
 
 		// Get the no of Examples from the data set
 		int noOfExamples = featureVectors.getColumnDimension();
@@ -89,10 +98,17 @@ public class KernelPerceptron {
 		Matrix mAlpha = new Matrix(noOfExamples, 1, 0);
 		// set converged variable to false - just for beginning the loop
 		boolean converged = false;
+		
 		// Average Alpha initialization
 		Matrix mAvgAlpha = new Matrix(noOfExamples, 1, 0);
 		// Total iteration count
 		double iterCount=1;
+		
+		// based on kType fill sigmaForGaussian / orderOfPolynomial
+		if(kType == Kernels.POLYNOMIAL)
+			orderOfPolynomial = (int) kernelParam;
+		else if(kType == Kernels.GAUSSIAN)
+			sigmaForGaussian = kernelParam;
 
 		// Run for given Max no. of Epochs or until converged
 		int e;
@@ -102,13 +118,13 @@ public class KernelPerceptron {
 			// Run for each element in the data-set
 			for(int i=0; i<noOfExamples; i++) {
 				// discriminant function value
-				double functionValue = discriminantFunction(mAlpha, vlabels, featureVectors, 
+				double functionValue = discriminantFunction(mAlpha, mLabels, featureVectors, 
 						featureVectors.getMatrix(0, featureVectors.getRowDimension()-1, i, i), kType);
 				// Sign of the function value
 				int yi = sign(functionValue);
 
 				// Check if predicted label is same as true label
-				if(yi != vlabels.get(0, i)) {
+				if(yi != mLabels.get(0, i)) {
 					// labels are different. So, improve mAlpha
 					mAlpha.set(i, 0, mAlpha.get(i, 0)+1);
 					// mark converged as false
@@ -135,18 +151,16 @@ public class KernelPerceptron {
 
 		// Check if Converged!
 		if(converged) {
+			setConverged(true);
 			System.out.println("Converged ~ in Kernel Perceptron (" + kType.toString() + ") @epoch: "+ (e-1) + " With Alpha:");
 			mAvgAlpha.print(2, 1);
-
-			// Return the trained alpha matrix
-			return mAvgAlpha;
 		}
 		else { 
 			System.out.println("Not Converged! ~ in Kernel Perceptron (" + kType.toString() + ")");
-
-			// returns single cell matrix with value -1 as it is not converged
-			return new Matrix(1,1,-1);
 		}
+		
+		// Return the trained alpha matrix
+		return mAvgAlpha;
 	}
 
 	/**
@@ -158,7 +172,7 @@ public class KernelPerceptron {
 	 * @param kType - kernel type to be used. Should be used same in training & testing
 	 * @return
 	 */
-	public static Matrix classify(Matrix mAlpha, Matrix trainingLabels, Matrix trainingPHI, Matrix testPHI, Kernels kType) {
+	public Matrix classify(Matrix mAlpha, Matrix trainingLabels, Matrix trainingPHI, Matrix testPHI, Kernels kType) {
 
 		// Check if the sent data is related or not
 		if(mAlpha.getColumnDimension() != trainingLabels.getRowDimension() || 
@@ -194,7 +208,7 @@ public class KernelPerceptron {
 	 * @param kType - Kernel Type (as in Kernels.java enum)
 	 * @return value of the prediction
 	 */
-	public static double discriminantFunction(Matrix mAlpha, Matrix vLabels, Matrix phi, Matrix vNewPointFeatures, Kernels kType) {
+	public double discriminantFunction(Matrix mAlpha, Matrix vLabels, Matrix phi, Matrix vNewPointFeatures, Kernels kType) {
 		// value
 		double result=0;
 
@@ -236,7 +250,7 @@ public class KernelPerceptron {
 	 * @param vNewPointFeatures - feature vector for data-point 
 	 * @return Kernel value
 	 */
-	private static double linearKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
+	private double linearKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		return vPhiJ.transpose().times(vNewPointFeatures).get(0, 0);
 	}
 
@@ -246,7 +260,7 @@ public class KernelPerceptron {
 	 * @param vNewPointFeatures - feature vector for data-point 
 	 * @return Kernel value
 	 */
-	private static double quadraticKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
+	private double quadraticKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), 2);
 	}
 
@@ -256,7 +270,7 @@ public class KernelPerceptron {
 	 * @param vNewPointFeatures - feature vector for data-point 
 	 * @return Kernel value
 	 */
-	private static double polynomialKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
+	private double polynomialKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), orderOfPolynomial);
 	}
 
@@ -266,7 +280,7 @@ public class KernelPerceptron {
 	 * @param vNewPointFeatures - feature vector for data-point 
 	 * @return Kernel value
 	 */
-	private static double gaussianKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
+	private double gaussianKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		Matrix resultMatrix = vPhiJ.minus(vNewPointFeatures);
 		return Math.exp(resultMatrix.transpose().times(resultMatrix).get(0, 0)/-2*sigmaForGaussian*sigmaForGaussian);
 	}
@@ -276,10 +290,26 @@ public class KernelPerceptron {
 	 * @param value
 	 * @return 1 - if 0 or +ve / -1 if -ve
 	 */
-	private static int sign(double value) {
+	private int sign(double value) {
 		if(value >= 0)
 			return 1;
 		else
 			return -1;
+	}
+	
+	/**
+	 * Set the converged variable to true or false
+	 * @param flag
+	 */
+	private void setConverged(boolean flag) {
+		converged = flag;
+	}
+	
+	/**
+	 * Get if the model converged or not on given data
+	 * @return true if converged else false
+	 */
+	public boolean isConverged() {
+		return converged;
 	}
 }
