@@ -21,7 +21,7 @@ public class ThreadTest {
         try {
             String str;
 
-            // waits the 2 seconds for the Callable.call to finish.
+            // waits the 10 seconds for the Callable.call to finish.
             for(int j=0; j<10; j++) {
             	str = task.get(j).get();
             	System.out.println(str);
@@ -45,8 +45,8 @@ class Foo implements Callable<String> {
 	
     public String call() {
         try {
-            // sleep for 2 seconds
-            Thread.sleep(2 * 1000);
+            // sleep for 10 seconds
+            Thread.sleep(10 * 1000);
         } catch(final InterruptedException ex) {
             ex.printStackTrace();
         }

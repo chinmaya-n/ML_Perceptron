@@ -36,8 +36,12 @@ public class OptimalEpochs {
 				Matrix mW = perceptron.trainPerceptron(epochs[i]);
 				
 				// Normalize the weight vector
-				mW = mW.times(1/(mW.transpose().times(mW).get(0,0)));
-//				mW.print(1, 10);
+				mW = mW.times(1/Math.sqrt(mW.transpose().times(mW).get(0,0)));
+//				mW.print(1, 1);
+				
+				// individual count for each number
+				int c = 0;
+				int t = 0;
 				
 				// Now test the learned weight vector on development data
 				// Get development data
@@ -50,12 +54,16 @@ public class OptimalEpochs {
 					// check for the current class examples 
 					if(gmDevelopment.getLabelsVector().get(0, n) == 1) {
 						totalCount++;	// increase total count
+						t++;
 						// check the machine label predicted for the same input data point
 						if(machineLabels.get(0, n) == 1) {
-							successCount++;	// increment success count 
+							successCount++;	// increment success count
+							c++;
 						}
 					}
 				}
+				
+				System.out.println("For "+j+":"+c+"/"+t);
 			}
 			
 			// Now write the accuracy for this epoch value

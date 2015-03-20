@@ -27,47 +27,37 @@ public class OptimalSigma {
 
 		// Test for accuracy for each degree
 		for(int d=0; d<sigmas.length; d++) {	// let d for degrees
-
-			// Get the kernel perceptron object
-			KernelPerceptron kp = new KernelPerceptron();
-			// count of correct predictions
-			double successCount = 0;
-			// total no of examples
-			double totalCount = 0;
-
-			// Learn each digit on Training data & test on Development data
+			// Initialize thread execution service
+			final ExecutorService service = Executors.newFixedThreadPool(10);
+			// list to store the accuracies from each digit
+			List<Future<int[]>> accuList = new ArrayList<Future<int[]>>();
+			
+			// count no of successful predictions & total no of examples
+			int[] count = {0, 0};
+			
+			// Send each digit learning & testing onto each thread
 			for(int n=0; n<10; n++) {	// let n be a number
-
-				// Get the training matrices 
-				GenerateMatrices gmTrain = new GenerateMatrices("./data/Digit"+n+".tra");
-				kp.featureVectors = gmTrain.getPHI();
-				kp.mLabels = gmTrain.getLabelsVector();
-				kp.normalize = true;
-
-				// train the perceptron
-				Matrix mAlpha = kp.trainKernelPerceptron(maxEpochs, Kernels.GAUSSIAN, sigmas[d]);
-
-				// Get the matrices from development data for testing
-				GenerateMatrices gmDevelopment = new GenerateMatrices("./data/Digit"+n+".dev");
-				Matrix machineLabels = kp.classify(mAlpha, gmTrain.getLabelsVector(), gmTrain.getPHI(),
-						gmDevelopment.getPHI(), Kernels.GAUSSIAN, sigmas[d]);
-
-				// Count no of successful predictions & total examples
-				for(int e=0; e<machineLabels.getColumnDimension(); e++) {
-					// Count no of examples
-					if(gmTrain.getLabelsVector().get(0, e) == 1) {
-						totalCount++;
-						// Count no of successful predictions
-						if(machineLabels.get(0, e) == 1) {
-							successCount++;
-						}
-					}
-				}
+				accuList.add(service.submit(new DigitThread(maxEpochs, sigmas[d], n)));
 			}
-
+			
+			try{
+				for(int n=0; n<10; n++) {
+					int[] successCounts = accuList.get(n).get();	// Get the values
+					count[0] += successCounts[0];	// Add the success predictions
+					count[1] += successCounts[1];	// add total count of examples
+				}
+			} catch(final InterruptedException ex) {
+				ex.printStackTrace();
+			} catch(final ExecutionException ex) {
+				ex.printStackTrace();
+			}
+			
+			// shutdown the service
+			service.shutdownNow();
+			
 			// Write the accuracy
-			accuracies[d] = successCount*100/totalCount;
-			System.out.println("SuccessCount: " + successCount + " TotalCount: " + totalCount);
+			accuracies[d] = count[0]*100/count[1];
+			System.out.println("SuccessCount: " + count[0] + " TotalCount: " + count[1]);
 			System.out.println("Total accuracies: "+accuracies[d]);
 		}
 	}
