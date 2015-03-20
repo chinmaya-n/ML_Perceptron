@@ -65,7 +65,7 @@ public class Perceptron {
 			setConverged(true);
 			System.out.println("Converged. ~ in Simple Perceptron");
 			System.out.println("@epoch: "+(e-1)+" for W:");
-			vW.print(5, 1);
+//			vW.print(5, 1);
 		}
 		else {
 			System.out.println("Not Converged! ~ in Simple Perceptron");
@@ -146,7 +146,7 @@ public class Perceptron {
 			setConverged(true);
 			System.out.println("Converged. ~ in averaged perceptron. (Converged for w not for avgW)");
 			System.out.println("@epoch: "+(e-1)+" for average vector W:");
-			vAvgW.print(5, 5);
+//			vAvgW.print(5, 5);
 		}
 		else {
 			System.out.println("Not Converged! ~ in Averaged Perceptron");

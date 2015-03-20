@@ -17,6 +17,8 @@ public class KernelPerceptron {
 	public Matrix featureVectors;
 	// matrix of labels for each input data
 	public Matrix mLabels;
+	// Normalize the kernels or not
+	public boolean normalize = false;
 
 	// sigma value for the gaussian kernel
 	private double sigmaForGaussian=0;
@@ -85,7 +87,7 @@ public class KernelPerceptron {
 		if(converged) {
 			setConverged(true);
 			System.out.println("Converged ~ in Kernel Perceptron (" + kType.toString() + ") @epoch: "+ (e-1) + " With Alpha:");
-			mAlpha.print(2, 1);
+//			mAlpha.print(2, 1);
 		}
 		else { 
 			System.out.println("Not Converged! ~ in Kernel Perceptron (" + kType.toString() + ")");
@@ -172,7 +174,7 @@ public class KernelPerceptron {
 		if(converged) {
 			setConverged(true);
 			System.out.println("Converged ~ in Kernel Perceptron (" + kType.toString() + ") @epoch: "+ (e-1) + " With Alpha:");
-			mAvgAlpha.print(2, 1);
+//			mAvgAlpha.print(2, 1);
 		}
 		else { 
 			System.out.println("Not Converged! ~ in Kernel Perceptron (" + kType.toString() + ")");
@@ -310,7 +312,8 @@ public class KernelPerceptron {
 					kernelValue = linearKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
 				}
 				else if(kType == Kernels.QUADRATIC) {
-					kernelValue = quadraticKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
+					orderOfPolynomial = 2;
+					kernelValue = polynomialKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
 				}
 				else if(kType == Kernels.POLYNOMIAL) {
 					kernelValue = polynomialKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
@@ -338,17 +341,14 @@ public class KernelPerceptron {
 	 * @return Kernel value
 	 */
 	private double linearKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
-		return vPhiJ.transpose().times(vNewPointFeatures).get(0, 0);
-	}
-
-	/**
-	 * Quadratic Kernel value calculation for given phiJ matrix to new data point feature vector
-	 * @param phiJ - feature vector for example j
-	 * @param vNewPointFeatures - feature vector for data-point 
-	 * @return Kernel value
-	 */
-	private double quadraticKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
-		return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), 2);
+		if(!normalize) {
+			return vPhiJ.transpose().times(vNewPointFeatures).get(0, 0);
+		}
+		else {
+			return vPhiJ.transpose().times(vNewPointFeatures).get(0, 0)/
+					(Math.sqrt(vPhiJ.transpose().times(vPhiJ).get(0, 0) *
+							vNewPointFeatures.transpose().times(vNewPointFeatures).get(0, 0)));
+		}
 	}
 
 	/**
@@ -358,7 +358,14 @@ public class KernelPerceptron {
 	 * @return Kernel value
 	 */
 	private double polynomialKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
-		return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), orderOfPolynomial);
+		if(!normalize) {
+			return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), orderOfPolynomial);
+		}
+		else {
+			return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), orderOfPolynomial)/
+					(Math.sqrt(Math.pow(1+linearKernel(vPhiJ, vPhiJ), orderOfPolynomial) * 
+							Math.pow(1+linearKernel(vNewPointFeatures, vNewPointFeatures), orderOfPolynomial)));
+		}
 	}
 
 	/**

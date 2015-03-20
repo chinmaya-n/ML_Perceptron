@@ -65,6 +65,7 @@ public class Test {
 			KernelPerceptron kernelPerceptron = new KernelPerceptron();
 			kernelPerceptron.featureVectors = mPHI;
 			kernelPerceptron.mLabels = mLabels;
+//			kernelPerceptron.normalize = true;
 			
 			// What kind of kernel to be used?
 			int kType = Integer.parseInt(argv[4]);

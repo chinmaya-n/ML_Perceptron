@@ -1,0 +1,14 @@
+SuccessCount: 100.0 TotalCount: 1000.0
+Total accuracies: 10.0
+
+SuccessCount: 99.0 TotalCount: 1000.0
+Total accuracies: 9.9
+
+SuccessCount: 96.0 TotalCount: 1000.0
+Total accuracies: 9.6
+
+SuccessCount: 106.0 TotalCount: 1000.0
+Total accuracies: 10.6
+
+SuccessCount: 101.0 TotalCount: 1000.0
+Total accuracies: 10.1
