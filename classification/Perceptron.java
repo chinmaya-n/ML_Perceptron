@@ -11,7 +11,9 @@ public class Perceptron {
 	public Matrix labelsVector;
 	// is converged or not
 	private boolean converged = false;
-	
+	// Normalize the kernels or not
+	public boolean normalize = false;
+
 	/**
 	 * Simple Two class perceptron training. 
 	 * @param maxEpochs - maximum number of epochs to perform if not converged 
@@ -22,10 +24,10 @@ public class Perceptron {
 		// Create a weight vector matrix, W - Dim: rows in (featureVectors) X 1
 		// i.e no. of features in each element X 1 & Initialize it to zero
 		Matrix vW = new Matrix(featureVectors.getRowDimension(), 1, 0);
-		
+
 		// Get the no of Examples from the data set
 		int noOfExamples = featureVectors.getColumnDimension();
-		
+
 		// set converged variable to false - just for beginning the loop
 		boolean converged = false;
 
@@ -49,32 +51,37 @@ public class Perceptron {
 					// mark converged as false
 					converged = false;
 				}
-				
+
 				// Debug prints
-//				System.out.println("Iteration: " +e+ "-" +i);
-//				System.out.println("phiXi:");
-//				phiXi.print(2, 1);
-//				System.out.println("yi: " + yi + " ti: " + labelVector.get(0, i));
-//				System.out.println("new W:");
-//				vW.print(2, 1);
+				//				System.out.println("Iteration: " +e+ "-" +i);
+				//				System.out.println("phiXi:");
+				//				phiXi.print(2, 1);
+				//				System.out.println("yi: " + yi + " ti: " + labelVector.get(0, i));
+				//				System.out.println("new W:");
+				//				vW.print(2, 1);
 			}
 		}
-		
+
+		// Normalize if needed
+		if(normalize) {
+			vW = vW.times(1/Math.sqrt(vW.transpose().times(vW).get(0, 0)));
+		}
+
 		// Check if Converged!
 		if(converged) {
 			setConverged(true);
 			System.out.println("Converged. ~ in Simple Perceptron");
 			System.out.println("@epoch: "+(e-1)+" for W:");
-//			vW.print(5, 1);
+			//			vW.print(5, 1);
 		}
 		else {
 			System.out.println("Not Converged! ~ in Simple Perceptron");
 		}
-		
+
 		// Return the W vector calculated for prediction
 		return vW;
 	}
-	
+
 	/**
 	 * Simple Two class average perceptron training. 
 	 * @param maxEpochs - maximum number of epochs to perform if not converged 
@@ -85,10 +92,10 @@ public class Perceptron {
 		// Create a weight vector matrix, W - Dim: rows in (featureVectors) X 1
 		// i.e no. of features in each element X 1 & Initialize it to zero
 		Matrix vW = new Matrix(featureVectors.getRowDimension(), 1, 0);
-		
+
 		// Create a average weight vector matrix, avgW - Dim: same as W
 		Matrix vAvgW = new Matrix(vW.getRowDimension(), vW.getColumnDimension(), 0);
-		
+
 		// count for total iterations on the data
 		// To get correct values in division, use count datatype as 'double'
 		double iterCount = 1;
@@ -118,44 +125,49 @@ public class Perceptron {
 					// mark converged as false
 					converged = false;
 				}
-				
+
 				// Sum the weight vector in each iteration
 				vAvgW = vAvgW.plus(vW);
 				// increase the total iteration count
 				iterCount++;
-				
+
 				// Debug prints
-//				System.out.println("Iteration: " +e+ "-" +i);
-//				System.out.println("phiXi:");
-//				phiXi.print(2, 1);
-//				System.out.println("yi: " + yi + " ti: " + labelsVector.get(0, i-1));
-//				System.out.println("new W:");
-//				vW.print(2, 1);
-//				System.out.println("new avg W:");
-//				vAvgW.print(2, 1);
-//				System.out.println("iteration Count: "+iterCount);
-//				System.out.println("--------------");
+				//				System.out.println("Iteration: " +e+ "-" +i);
+				//				System.out.println("phiXi:");
+				//				phiXi.print(2, 1);
+				//				System.out.println("yi: " + yi + " ti: " + labelsVector.get(0, i-1));
+				//				System.out.println("new W:");
+				//				vW.print(2, 1);
+				//				System.out.println("new avg W:");
+				//				vAvgW.print(2, 1);
+				//				System.out.println("iteration Count: "+iterCount);
+				//				System.out.println("--------------");
 			}
 		}
 
 		// Average the total sum of W's
 		vAvgW = vAvgW.times(1/iterCount);
-		
+
+		// Normalize if needed
+		if(normalize) {
+			vAvgW = vAvgW.times(1/Math.sqrt(vAvgW.transpose().times(vAvgW).get(0, 0)));
+		}
+
 		// Check if Converged!
 		if(converged) {
 			setConverged(true);
 			System.out.println("Converged. ~ in averaged perceptron. (Converged for w not for avgW)");
 			System.out.println("@epoch: "+(e-1)+" for average vector W:");
-//			vAvgW.print(5, 5);
+			//			vAvgW.print(5, 5);
 		}
 		else {
 			System.out.println("Not Converged! ~ in Averaged Perceptron");
 		}
-		
+
 		// Return the average weight Vector
 		return vAvgW;
 	}
-	
+
 	/**
 	 * Classifies the given test data into different classes either +1 or -1
 	 * @param w	- learned weight vector from training data
@@ -163,30 +175,30 @@ public class Perceptron {
 	 * @return labels matrix i.e matrix with label for each test example in each column. Dim: 1 x noOfTestExamples 
 	 */
 	public Matrix classify(Matrix w, Matrix testPHI) {
-		
+
 		// Test if the given matrices are compatible or not
 		if(w.getRowDimension() != testPHI.getRowDimension()) {
 			System.out.println("Check the input matrices carefully for classify method!");
 			System.out.println("No of Features in test examples is not compatible with 'W' matrix dimensions! They must be equal.");
 			System.exit(-1);
 		}
-		
+
 		// No of test data points
 		int noOfTestPoints = testPHI.getColumnDimension();
-		
+
 		// Create a class label matrix to write the predictions
 		Matrix vLabels = new Matrix(1, noOfTestPoints, 0);
-		
+
 		// Predict the class for each test point
 		for(int i=0; i<noOfTestPoints; i++) {
 			vLabels.set(0, i, sign(discriminantFunction(w, 
 					testPHI.getMatrix(0, testPHI.getRowDimension()-1, i, i))));
 		}
-		
+
 		// return labels
 		return vLabels;
 	}
-	
+
 	/**
 	 * Discriminant function value when using simple Perceptron
 	 * @param vW - W matrix (learned weight vector)
@@ -197,7 +209,7 @@ public class Perceptron {
 		// return f(x) = wT * phi(Xi)
 		return vW.transpose().times(phiXi).get(0, 0);
 	}
-	
+
 	/**
 	 * Find the sign of the value. i.e either +ve or -ve
 	 * @param value
@@ -206,10 +218,10 @@ public class Perceptron {
 	private int sign(double value) {
 		if(value >= 0)
 			return 1;
-		else
+		else 
 			return -1;
 	}
-	
+
 	/**
 	 * Set the converged variable to true or false
 	 * @param flag
@@ -217,7 +229,7 @@ public class Perceptron {
 	private void setConverged(boolean flag) {
 		converged = flag;
 	}
-	
+
 	/**
 	 * Get if the model converged or not on given data
 	 * @return true if converged else false

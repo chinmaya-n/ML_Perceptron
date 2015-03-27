@@ -21,9 +21,9 @@ public class KernelPerceptron {
 	public boolean normalize = false;
 
 	// sigma value for the gaussian kernel
-	private double sigmaForGaussian=0;
+	public double sigmaForGaussian;
 	// Order of polynomial
-	private int orderOfPolynomial=0;
+	public int orderOfPolynomial;
 	// if converged or not
 	private boolean converged = false;
 
@@ -359,12 +359,15 @@ public class KernelPerceptron {
 	 */
 	private double polynomialKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		if(!normalize) {
-			return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), orderOfPolynomial);
+			return Math.pow(1+vPhiJ.transpose().times(vNewPointFeatures).get(0, 0), orderOfPolynomial);
 		}
 		else {
-			return Math.pow(1+linearKernel(vPhiJ, vNewPointFeatures), orderOfPolynomial)/
-					(Math.sqrt(Math.pow(1+linearKernel(vPhiJ, vPhiJ), orderOfPolynomial) * 
-							Math.pow(1+linearKernel(vNewPointFeatures, vNewPointFeatures), orderOfPolynomial)));
+			double numerator = Math.pow(1+vPhiJ.transpose().times(vNewPointFeatures).get(0, 0), orderOfPolynomial);
+			double kernelXX = Math.pow(1+vPhiJ.transpose().times(vPhiJ).get(0, 0), orderOfPolynomial);
+			double kernelYY = Math.pow(1+vNewPointFeatures.transpose().times(vNewPointFeatures).get(0, 0), orderOfPolynomial);
+			double denominator = Math.sqrt( kernelXX * kernelYY);
+//			System.out.println("kxx: "+kernelXX+ " kyy: "+kernelYY+ " Denominator: "+denominator+ " Numerator: " +numerator);
+			return numerator/denominator;
 		}
 	}
 
@@ -374,13 +377,18 @@ public class KernelPerceptron {
 	 * @param vNewPointFeatures - feature vector for data-point 
 	 * @return Kernel value
 	 */
-	private double gaussianKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
+	public double gaussianKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		Matrix resultMatrix = vPhiJ.minus(vNewPointFeatures);
-		return Math.exp(resultMatrix.transpose().times(resultMatrix).get(0, 0)/-2*sigmaForGaussian*sigmaForGaussian);
+		double numerator = resultMatrix.transpose().times(resultMatrix).get(0, 0);
+		double denominator = 2*sigmaForGaussian*sigmaForGaussian;
+//		double result = Math.exp(-1*(resultMatrix.transpose().times(resultMatrix).get(0, 0))/(2*sigmaForGaussian*sigmaForGaussian));
+		double result = Math.exp(-1*numerator/denominator);
+//		System.out.println("kernel value: "+result);
+		return result;
 	}
 
 	/**
-	 * 
+	 * Write the learned info to a file
 	 * @param mAlpha
 	 * @param mLabels
 	 * @param mPHI
@@ -396,7 +404,7 @@ public class KernelPerceptron {
 		// alpha*T phi(x0) phi(x1) phi(x2) .....
 		// Select Each example
 		for(int i=0; i<mPHI.getColumnDimension(); i++) {
-			bw.write(Integer.toString((int) (mAlpha.get(i, 0)*mLabels.get(0, i))));
+			bw.write(Double.toString((mAlpha.get(i, 0)*mLabels.get(0, i))));
 			bw.write(" ");
 			// Concatenate all the feature vectors for an example
 			for(int j=0; j<mPHI.getRowDimension(); j++) {
@@ -404,6 +412,12 @@ public class KernelPerceptron {
 				bw.write(" ");
 			}
 
+			//-- testing
+//			double value = mAlpha.get(i, 0)*mLabels.get(0, i);
+//			if(value > 0) {
+//				System.out.println(i);
+//			}
+			//--
 			// write line to file
 			bw.write("\n");
 		}

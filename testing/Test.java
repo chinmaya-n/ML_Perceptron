@@ -6,6 +6,15 @@ import weka.core.matrix.Matrix;
 
 public class Test {
 
+	/**
+	 * Test Program for all the perceptrons
+	 * @param argv : argv[0] = training data file; argv[1] = test data file;
+	 * 				argv[2] = perceptron type i.e 1-simple; 2-Avg; 3-Kernel; 4-Avg Kernel
+	 * 				argv[3] = max Epoch count;	
+	 * 				argv[4] = kernel type i.e 1-linear; 2-quadratic; 3-polynomial; 4-gaussian
+	 * 				argv[5] = degree/sigma for polynomial/gaussian
+	 * @throws IOException
+	 */
 	public static void main(String[] argv) throws IOException {
 		
 		// Get Training File
@@ -31,13 +40,20 @@ public class Test {
 		switch(pType) {
 		case 1: // Simple Perceptron
 		{	
+			// Get the linear perceptron matrix values
+			gmTraining = new GenerateMatrices(trainingDataFile, "linear");
+			mPHI = gmTraining.getPHI();
+			mLabels = gmTraining.getLabelsVector();
+			
 			// Create perceptron object
 			Perceptron perceptron = new Perceptron();
 			perceptron.featureVectors = mPHI;
 			perceptron.labelsVector = mLabels;
+			perceptron.normalize = true;
 			
 			// Send the data for training simple perceptron & get W
 			Matrix mW = perceptron.trainPerceptron(maxEpochs);
+			mW.transpose().print(3, 2);
 			// Send for testing using the learned weights vector
 			//
 			
@@ -46,6 +62,11 @@ public class Test {
 		}
 		case 2: // Average Perceptron
 		{	
+			// Get the linear perceptron matrix values
+			gmTraining = new GenerateMatrices(trainingDataFile, "linear");
+			mPHI = gmTraining.getPHI();
+			mLabels = gmTraining.getLabelsVector();
+			
 			// Create perceptron object
 			Perceptron perceptron = new Perceptron();
 			perceptron.featureVectors = mPHI;
@@ -53,6 +74,7 @@ public class Test {
 			
 			// Send the data for training simple perceptron & get W
 			Matrix mW = perceptron.trainAveragedPerceptron(maxEpochs);
+			mW.print(3, 2);
 			// Send for testing using the learned weights vector
 			//
 			
@@ -65,7 +87,7 @@ public class Test {
 			KernelPerceptron kernelPerceptron = new KernelPerceptron();
 			kernelPerceptron.featureVectors = mPHI;
 			kernelPerceptron.mLabels = mLabels;
-//			kernelPerceptron.normalize = true;
+			kernelPerceptron.normalize = true;
 			
 			// What kind of kernel to be used?
 			int kType = Integer.parseInt(argv[4]);
@@ -90,10 +112,11 @@ public class Test {
 			}
 			
 			// Write to file
-			kernelPerceptron.writeLearnedInfoToFile = "./LearnedInfo/Kernel_" + kEnumType.toString() + "_" + argv[5] + ".learned";
+//			kernelPerceptron.writeLearnedInfoToFile = "./LearnedInfo/Kernel_" + kEnumType.toString() + "_" + argv[5] + ".learned";
 			
 			// Send the data for training & get alpha
 			Matrix mAlpha = kernelPerceptron.trainKernelPerceptron(maxEpochs, kEnumType, Double.parseDouble(argv[5]));
+			mAlpha.print(1, 0);
 			// Send for testing using the mAlpha
 //			kernelPerceptron.classify(mAlpha, mLabels, mPHI, testPHI, kEnumType, Double.parseDouble(argv[5])).print(1, 1);
 			

@@ -28,7 +28,7 @@ public class OptimalEpochs {
 			for(int j=0; j<10; j++) {
 				
 				// Get the Training Matrices from data file
-				GenerateMatrices gmTraining = new GenerateMatrices("./data/Digit" + j + ".tra");
+				GenerateMatrices gmTraining = new GenerateMatrices("./data/Digit" + j + ".tra", "linear");
 				// populate in perceptron
 				perceptron.featureVectors = gmTraining.getPHI();
 				perceptron.labelsVector = gmTraining.getLabelsVector();
@@ -45,7 +45,7 @@ public class OptimalEpochs {
 				
 				// Now test the learned weight vector on development data
 				// Get development data
-				GenerateMatrices gmDevelopment = new GenerateMatrices("./data/Digit" + j + ".dev");
+				GenerateMatrices gmDevelopment = new GenerateMatrices("./data/Digit" + j + ".dev", "linear");
 				// Get the system labels for development data
 				Matrix machineLabels = perceptron.classify(mW, gmDevelopment.getPHI());
 				

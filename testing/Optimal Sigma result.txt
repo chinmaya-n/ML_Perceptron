@@ -1,76 +1,45 @@
-SuccessCount: 100.0 TotalCount: 1000.0
-Total accuracies: 10.0
+T=0.5:
 
-SuccessCount: 405.0 TotalCount: 1000.0
-Total accuracies: 40.5
+s=0.5
+SuccessCount: 996 TotalCount: 1000
+Total accuracies: 99.6
 
-SuccessCount: 896.0 TotalCount: 1000.0
-Total accuracies: 89.6
+s=2
+SuccessCount: 971 TotalCount: 1000
+Total accuracies: 97.1
 
-SuccessCount: 999.0 TotalCount: 1000.0
-Total accuracies: 99.9
+s=3
+SuccessCount: 972 TotalCount: 1000
+Total accuracies: 97.2
 
-SuccessCount: 1000.0 TotalCount: 1000.0
-Total accuracies: 100.0
+s=5
+SuccessCount: 972 TotalCount: 1000
+Total accuracies: 97.2
 
-------------------
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 4 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 4 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 4 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 4 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 4 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 4 With Alpha:
-SuccessCount: 100 TotalCount: 1000
-Total accuracies: 10.0
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 3 With Alpha:
-SuccessCount: 405 TotalCount: 1000
-Total accuracies: 40.0
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-SuccessCount: 896 TotalCount: 1000
-Total accuracies: 89.0
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-SuccessCount: 999 TotalCount: 1000
-Total accuracies: 99.0
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-Converged ~ in Kernel Perceptron (GAUSSIAN) @epoch: 2 With Alpha:
-SuccessCount: 1000 TotalCount: 1000
-Total accuracies: 100.0
+s=10
+SuccessCount: 982 TotalCount: 1000
+Total accuracies: 98.2
+
+---------------------------------
+
+T=10:
+
+s=0.5
+SuccessCount: 27 TotalCount: 1000
+Total accuracies: 2.7
+
+s=2
+SuccessCount: 971 TotalCount: 1000
+Total accuracies: 97.1
+
+s=3
+SuccessCount: 972 TotalCount: 1000
+Total accuracies: 97.2
+
+s=5
+SuccessCount: 972 TotalCount: 1000
+Total accuracies: 97.2
+
+s=10
+SuccessCount: 982 TotalCount: 1000
+Total accuracies: 98.2

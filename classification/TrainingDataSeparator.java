@@ -32,7 +32,7 @@ public class TrainingDataSeparator {
 		// Build a list of files to write the training data into them, based on their class
 		List<File> fileList = new ArrayList<File>();
 		for(int i=0; i<10; i++) {
-			fileList.add(new File("Digit"+i+".tra"));	// .dev for development files - .tra for training files
+			fileList.add(new File("Digit"+i+".tes"));	// .dev for development files - .tra for training files
 		}
 		// Create a list of write buffers to write into these files
 		List<BufferedWriter> bwList = new ArrayList<BufferedWriter>();
@@ -46,7 +46,7 @@ public class TrainingDataSeparator {
 		while(line != null) {
 			// Get the line length
 			int lineLength = line.length();
-			System.out.println(lineLength);
+//			System.out.println(lineLength);
 			lineCount++;
 			
 			// Get the class of the point
