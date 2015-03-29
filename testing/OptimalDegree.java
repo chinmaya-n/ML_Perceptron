@@ -22,7 +22,7 @@ public class OptimalDegree {
 	 */
 	public static void main(String[] args) throws IOException {
 		// Max Epochs ~ best from the OptimalEpochs.java
-		int maxEpochs = 10; //5;
+		int maxEpochs = 5;
 		// given range for the degree
 		int[] degrees = {2, 3, 4, 5 ,6};
 

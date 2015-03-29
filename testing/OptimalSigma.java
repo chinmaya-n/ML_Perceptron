@@ -20,9 +20,9 @@ public class OptimalSigma {
 	 */
 	public static void main(String[] args) throws IOException {
 		// Max Epochs ~ best from the OptimalEpochs.java
-		int maxEpochs = 10; //5;
+		int maxEpochs = 5;
 		// given range for the degree
-		double[] sigmas = {0.5, 2, 3, 5, 10};
+		double[] sigmas = {2, 3, 5, 10};
 		// corresponding accuracies for the degrees
 		double[] accuracies = new double[sigmas.length];
 
@@ -109,12 +109,19 @@ class DigitThread implements Callable<int[]> {
 
 		// test for each example
 		for(int e=0; e<testPHI.getColumnDimension(); e++) {
+			
+			// For testing why disc value is 0
+//			if((e==9 || e==18 || e==21 || e==29 || e==49) && digit==8){
+//				System.out.println("@ zero giving example");
+//			}
+			
 			// Test only those points which are our interested digit i.e either 0/1/2/..
 			if(trueLabels.get(0, e)==1) {
 				// Get the point for testing
 				Matrix vNewPointFeatures = testPHI.getMatrix(0, testPHI.getRowDimension()-1, e, e);
 				// test it for classification
 				double result = kp.discriminantFunction(mAlpha, kp.mLabels, kp.featureVectors, vNewPointFeatures, Kernels.GAUSSIAN);
+				
 				if(result>=0) {
 					machineLabels.set(0, e, 1);
 					count[0]++;
