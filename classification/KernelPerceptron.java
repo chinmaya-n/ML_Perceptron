@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.math.BigDecimal;
 import java.util.StringTokenizer;
 
 import weka.core.matrix.Matrix;
@@ -297,9 +298,9 @@ public class KernelPerceptron {
 	 * @param kType - Kernel Type (as in Kernels.java enum)
 	 * @return value of the prediction
 	 */
-	public double discriminantFunction(Matrix mAlpha, Matrix vLabels, Matrix phi, Matrix vNewPointFeatures, Kernels kType) {
+	public BigDecimal discriminantFunction(Matrix mAlpha, Matrix vLabels, Matrix phi, Matrix vNewPointFeatures, Kernels kType) {
 		// value
-		double result=0;
+		BigDecimal result=0;
 
 		// Sum of combination of each point with new data point (alpha * label * KernelValue of the both points)
 		for(int j=0; j<phi.getColumnDimension(); j++) {
@@ -307,7 +308,7 @@ public class KernelPerceptron {
 			// Calculate the value only if alpha value is not zero
 			if(mAlpha.get(j, 0) != 0) {
 				// Kernel value
-				double kernelValue=0;
+				BigDecimal kernelValue=0;
 				if(kType == Kernels.LINEAR) {
 					kernelValue = linearKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
 				}
@@ -326,7 +327,7 @@ public class KernelPerceptron {
 					System.exit(-1);
 				}
 				// sum of(alpha_j * label_j * kernel(j, i)); where j = 1 .. N
-				result += mAlpha.get(j, 0) * vLabels.get(0, j) * kernelValue;
+				result = result.add(mAlpha.get(j, 0) * vLabels.get(0, j) * kernelValue);
 			}
 		}
 
@@ -377,12 +378,12 @@ public class KernelPerceptron {
 	 * @param vNewPointFeatures - feature vector for data-point 
 	 * @return Kernel value
 	 */
-	public double gaussianKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
+	public BigDecimal gaussianKernel(Matrix vPhiJ, Matrix vNewPointFeatures) {
 		Matrix resultMatrix = vPhiJ.minus(vNewPointFeatures);
 		double numerator = resultMatrix.transpose().times(resultMatrix).get(0, 0);
 		double denominator = 2*sigmaForGaussian*sigmaForGaussian;
 //		double result = Math.exp(-1*(resultMatrix.transpose().times(resultMatrix).get(0, 0))/(2*sigmaForGaussian*sigmaForGaussian));
-		double result = Math.exp(-1*numerator/denominator);
+		BigDecimal result = Math.exp(-1*numerator/denominator);
 //		System.out.println("kernel value: "+result);
 		return result;
 	}

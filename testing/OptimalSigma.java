@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.*;
+import java.math.BigDecimal;
 
 public class OptimalSigma {
 
@@ -120,7 +121,7 @@ class DigitThread implements Callable<int[]> {
 				// Get the point for testing
 				Matrix vNewPointFeatures = testPHI.getMatrix(0, testPHI.getRowDimension()-1, e, e);
 				// test it for classification
-				double result = kp.discriminantFunction(mAlpha, kp.mLabels, kp.featureVectors, vNewPointFeatures, Kernels.GAUSSIAN);
+				BigDecimal result = kp.discriminantFunction(mAlpha, kp.mLabels, kp.featureVectors, vNewPointFeatures, Kernels.GAUSSIAN);
 				
 				if(result>=0) {
 					machineLabels.set(0, e, 1);
