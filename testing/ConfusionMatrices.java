@@ -21,13 +21,13 @@ public class ConfusionMatrices {
 //		perceptronConfusionMatrix();
 		
 		// average perceptron confusion matrix
-		avgPerceptronConfusionMatrix();
+//		avgPerceptronConfusionMatrix();
 		
 		// kernel perceptron - polynomial - d=5
 //		kernelPerceptronPolynomialConfusionMatrix();
 		
 		// kernel perceptron - gaussian - sigma=0.5
-//		kernelPerceptronGaussianConfusionMatrix();
+		kernelPerceptronGaussianConfusionMatrix();
 		
 		// average kernel perceptron - polynomial - d=5
 //		avgKernelPerceptronPolynomialConfusionMatrix();
@@ -257,10 +257,11 @@ public class ConfusionMatrices {
 	}
 	
 	private static void kernelPerceptronGaussianConfusionMatrix() throws IOException {
+		
 		/******* Confusion Matrix for kernel perceptron - Gaussian with sigma = 0.5 *******/
 
 		KernelPerceptron kp = new KernelPerceptron();				// perceptron object
-		kp.sigmaForGaussian = 0.5;
+		kp.sigmaForGaussian = 10;
 
 		// As we already have trained output files i.e. ".learned" files we will use them directly
 		// to predict the new labels
@@ -270,7 +271,7 @@ public class ConfusionMatrices {
 		// Get the alpha*t for each digit And trainingPhi
 		for(int d=0; d<10; d++) { // d for digit
 			// Open the file to get the learned contents
-			String fileName = "./LearnedInfo/Digit"+d+"_KernelPerceptron_Epoch5_Gaus0.5.learned";
+			String fileName = "./LearnedInfo/Digit"+d+"_KernelPerceptron_Epoch5_Gaus10.learned";
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 
 			// Get the size of the features for an example
@@ -322,6 +323,7 @@ public class ConfusionMatrices {
 		// Build a dummy label list (we have already got alpha*t in a matrix)
 		Matrix mTrainingLabels = new Matrix(1, mTrainingPHI.getColumnDimension(), 1);
 
+		/*********** TESTING! *************/
 		// Build the confusion Matrix - Column: True Label; Row: Machine Label
 		Matrix mConfusionKernelPerceptron = new Matrix(10, 10, 0);
 
@@ -341,6 +343,13 @@ public class ConfusionMatrices {
 			for(int d=0; d<10; d++) {		// d for digit
 				double funcValue = kp.discriminantFunction(alphaTList.get(d), mTrainingLabels, mTrainingPHI,
 						testPHI.getMatrix(0, testPHI.getRowDimension()-1, e, e), Kernels.GAUSSIAN);
+				
+				//-- testing
+				if(e==0) {
+					System.out.println("e=0 disc value: "+funcValue);
+				}
+				// --
+				
 				discFuncValueList.add(funcValue);
 			}
 

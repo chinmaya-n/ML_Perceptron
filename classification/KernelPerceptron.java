@@ -308,18 +308,19 @@ public class KernelPerceptron {
 			if(mAlpha.get(j, 0) != 0) {
 				// Kernel value
 				double kernelValue=0;
+				Matrix trainingEg = phi.getMatrix(0, phi.getRowDimension()-1, j, j);
 				if(kType == Kernels.LINEAR) {
-					kernelValue = linearKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
+					kernelValue = linearKernel(trainingEg, vNewPointFeatures);
 				}
 				else if(kType == Kernels.QUADRATIC) {
 					orderOfPolynomial = 2;
-					kernelValue = polynomialKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
+					kernelValue = polynomialKernel(trainingEg, vNewPointFeatures);
 				}
 				else if(kType == Kernels.POLYNOMIAL) {
-					kernelValue = polynomialKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
+					kernelValue = polynomialKernel(trainingEg, vNewPointFeatures);
 				}
 				else if(kType == Kernels.GAUSSIAN) {
-					kernelValue = gaussianKernel(phi.getMatrix(0, phi.getRowDimension()-1, j, j), vNewPointFeatures);
+					kernelValue = gaussianKernel(trainingEg, vNewPointFeatures);
 				}
 				else {
 					System.out.println("Kernel type Unsupported!!");
