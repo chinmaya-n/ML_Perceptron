@@ -21,13 +21,13 @@ public class ConfusionMatrices {
 //		perceptronConfusionMatrix();
 		
 		// average perceptron confusion matrix
-		avgPerceptronConfusionMatrix();
+//		avgPerceptronConfusionMatrix();
 		
 		// kernel perceptron - polynomial - d=5
 //		kernelPerceptronPolynomialConfusionMatrix();
 		
 		// kernel perceptron - gaussian - sigma=0.5
-//		kernelPerceptronGaussianConfusionMatrix();
+		kernelPerceptronGaussianConfusionMatrix();
 		
 		// average kernel perceptron - polynomial - d=5
 //		avgKernelPerceptronPolynomialConfusionMatrix();

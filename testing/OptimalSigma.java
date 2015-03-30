@@ -22,7 +22,7 @@ public class OptimalSigma {
 		// Max Epochs ~ best from the OptimalEpochs.java
 		int maxEpochs = 5;
 		// given range for the degree
-		double[] sigmas = {2, 3, 5, 10};
+		double[] sigmas = {0.5}; //, 2, 3, 5, 10};
 		// corresponding accuracies for the degrees
 		double[] accuracies = new double[sigmas.length];
 
@@ -122,7 +122,7 @@ class DigitThread implements Callable<int[]> {
 				// test it for classification
 				double result = kp.discriminantFunction(mAlpha, kp.mLabels, kp.featureVectors, vNewPointFeatures, Kernels.GAUSSIAN);
 				
-				if(result>=0) {
+				if(result>0) {
 					machineLabels.set(0, e, 1);
 					count[0]++;
 				}

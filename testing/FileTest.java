@@ -21,10 +21,11 @@ public class FileTest {
 			kp.featureVectors = gm.getPHI();
 			kp.mLabels = gm.getLabelsVector();
 			kp.normalize = true;
-			kp.orderOfPolynomial = 5;
+//			kp.orderOfPolynomial = 5;
+			kp.sigmaForGaussian = 0.5;
 
 			// Train the perceptron
-			kp.writeLearnedInfoToFile = "./LearnedInfo/Digit"+i+"_AvgKernelPerceptron_Epoch5_Gaus0.5.learned";
+			kp.writeLearnedInfoToFile = "./LearnedInfo/Digit"+i+"_KernelPerceptron_Epoch5_Gaus0.5.learned";
 //			kp.trainKernelPerceptron(5, Kernels.GAUSSIAN, 10);
 //			long startTime = System.currentTimeMillis();
 			kp.trainKernelPerceptron(5, Kernels.GAUSSIAN, 0.5);
